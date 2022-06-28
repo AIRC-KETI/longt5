@@ -37,6 +37,8 @@ import t5.data
 from t5.evaluation import metrics
 import tensorflow.compat.v1 as tf
 
+from longt5.default_vocab import DEFAULT_VOCAB
+
 MEDIASUM_DATA_DIR = "/path/to/processed/mediasum/"
 NQ_DATA_DIR = "/path/to/processed/nq/"
 
@@ -52,13 +54,114 @@ DEFAULT_TEMPERATURE = 1.0 / 0.3
 DEFAULT_MIX_RATE = functools.partial(
     t5.data.rate_num_examples, temperature=DEFAULT_TEMPERATURE)
 
-DEFAULT_VOCAB = t5.data.get_default_vocabulary()
+#DEFAULT_VOCAB = t5.data.get_default_vocabulary()
 DEFAULT_OUTPUT_FEATURES = {
     "inputs":
         seqio.Feature(vocabulary=DEFAULT_VOCAB, add_eos=True, required=False),
     "targets":
         seqio.Feature(vocabulary=DEFAULT_VOCAB, add_eos=True)
 }
+
+# =========================== Long ket5 Pre-training Tasks/Mixtures ======================
+for mean_value in (3, 5, 10, 20):
+  seqio.TaskRegistry.add(
+      "keti_en_v220_span_corruption_{}_mean_noise".format(mean_value),
+      source=seqio.TfdsDataSource(tfds_name="keti/en"),
+      preprocessors=[
+          functools.partial(
+              seqio.preprocessors.rekey,
+              key_map={
+                  "inputs": None,
+                  "targets": "text"
+              }),
+          seqio.preprocessors.tokenize,
+          seqio.CacheDatasetPlaceholder(),
+          functools.partial(
+              t5.data.preprocessors.span_corruption,
+              mean_noise_span_length=mean_value),
+          seqio.preprocessors.append_eos_after_trim,
+      ],
+      output_features=DEFAULT_OUTPUT_FEATURES,
+      metric_fns=[])
+
+seqio.TaskRegistry.add(
+    "keti_en_v220_pegasus_parser",
+    source=seqio.TfdsDataSource(tfds_name="keti/en"),
+    preprocessors=[
+        functools.partial(
+            t5.data.preprocessors.rekey,
+            key_map={
+                "inputs": "text",
+                "targets": "text",
+            }),
+        seqio.CacheDatasetPlaceholder(),
+        longt5_preprocessors.pegasus_parse,
+        # Pegasus parser adds EOS id, so no need for using seqio methods.
+    ],
+    output_features=DEFAULT_OUTPUT_FEATURES,
+    metric_fns=[])
+
+for mean_value in (3, 5, 10, 20):
+  seqio.TaskRegistry.add(
+      "keti_ko_v220_span_corruption_{}_mean_noise".format(mean_value),
+      source=seqio.TfdsDataSource(tfds_name="keti/ko"),
+      preprocessors=[
+          functools.partial(
+              seqio.preprocessors.rekey,
+              key_map={
+                  "inputs": None,
+                  "targets": "text"
+              }),
+          seqio.preprocessors.tokenize,
+          seqio.CacheDatasetPlaceholder(),
+          functools.partial(
+              t5.data.preprocessors.span_corruption,
+              mean_noise_span_length=mean_value),
+          seqio.preprocessors.append_eos_after_trim,
+      ],
+      output_features=DEFAULT_OUTPUT_FEATURES,
+      metric_fns=[])
+
+seqio.TaskRegistry.add(
+    "keti_ko_v220_pegasus_parser",
+    source=seqio.TfdsDataSource(tfds_name="keti/ko"),
+    preprocessors=[
+        functools.partial(
+            t5.data.preprocessors.rekey,
+            key_map={
+                "inputs": "text",
+                "targets": "text",
+            }),
+        seqio.CacheDatasetPlaceholder(),
+        longt5_preprocessors.pegasus_parse,
+        # Pegasus parser adds EOS id, so no need for using seqio methods.
+    ],
+    output_features=DEFAULT_OUTPUT_FEATURES,
+    metric_fns=[])
+
+seqio.MixtureRegistry.add(
+    "keti_en_ko_v220_pegasus_span_corruption", [
+        "keti_ko_v220_pegasus_parser",
+        "keti_ko_v220_span_corruption_3_mean_noise",
+        "keti_en_v220_pegasus_parser",
+        "keti_en_v220_span_corruption_3_mean_noise",
+    ],
+    default_rate=1.0)
+
+seqio.MixtureRegistry.add(
+    "keti_en_v220_pegasus_span_corruption", [
+        "keti_en_v220_pegasus_parser",
+        "keti_en_v220_span_corruption_3_mean_noise",
+    ],
+    default_rate=1.0)
+
+seqio.MixtureRegistry.add(
+    "keti_ko_v220_pegasus_span_corruption", [
+        "keti_ko_v220_pegasus_parser",
+        "keti_ko_v220_span_corruption_3_mean_noise",
+    ],
+    default_rate=1.0)
+
 
 # =========================== Pre-training Tasks/Mixtures ======================
 for mean_value in (3, 5, 10, 20):
