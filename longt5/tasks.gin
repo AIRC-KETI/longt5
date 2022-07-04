@@ -1,0 +1,6 @@
+from __gin__ import dynamic_registration
+
+include "flaxformer/t5x/configs/longt5/models/longt5_1_1_transient_global_base.gin"
+include "t5x/configs/runs/pretrain.gin"
+
+from longt5 import tasks

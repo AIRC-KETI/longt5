@@ -75,7 +75,6 @@ for mean_value in (3, 5, 10, 20):
                   "targets": "text"
               }),
           seqio.preprocessors.tokenize,
-          seqio.CacheDatasetPlaceholder(),
           functools.partial(
               t5.data.preprocessors.span_corruption,
               mean_noise_span_length=mean_value),
@@ -94,7 +93,6 @@ seqio.TaskRegistry.add(
                 "inputs": "text",
                 "targets": "text",
             }),
-        seqio.CacheDatasetPlaceholder(),
         longt5_preprocessors.pegasus_parse,
         # Pegasus parser adds EOS id, so no need for using seqio methods.
     ],
@@ -113,7 +111,6 @@ for mean_value in (3, 5, 10, 20):
                   "targets": "text"
               }),
           seqio.preprocessors.tokenize,
-          seqio.CacheDatasetPlaceholder(),
           functools.partial(
               t5.data.preprocessors.span_corruption,
               mean_noise_span_length=mean_value),
@@ -132,7 +129,6 @@ seqio.TaskRegistry.add(
                 "inputs": "text",
                 "targets": "text",
             }),
-        seqio.CacheDatasetPlaceholder(),
         longt5_preprocessors.pegasus_parse,
         # Pegasus parser adds EOS id, so no need for using seqio methods.
     ],
