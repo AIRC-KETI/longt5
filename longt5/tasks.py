@@ -66,7 +66,7 @@ DEFAULT_OUTPUT_FEATURES = {
 for mean_value in (3, 5, 10, 20):
   seqio.TaskRegistry.add(
       "keti_en_v220_span_corruption_{}_mean_noise".format(mean_value),
-      source=seqio.TfdsDataSource(tfds_name="keti/en"),
+      source=seqio.TfdsDataSource(tfds_name="keti/en:1.0.0"),
       preprocessors=[
           functools.partial(
               seqio.preprocessors.rekey,
@@ -86,7 +86,7 @@ for mean_value in (3, 5, 10, 20):
 
 seqio.TaskRegistry.add(
     "keti_en_v220_pegasus_parser",
-    source=seqio.TfdsDataSource(tfds_name="keti/en"),
+    source=seqio.TfdsDataSource(tfds_name="keti/en:1.0.0"),
     preprocessors=[
         functools.partial(
             t5.data.preprocessors.rekey,
@@ -104,7 +104,7 @@ seqio.TaskRegistry.add(
 for mean_value in (3, 5, 10, 20):
   seqio.TaskRegistry.add(
       "keti_ko_v220_span_corruption_{}_mean_noise".format(mean_value),
-      source=seqio.TfdsDataSource(tfds_name="keti/ko"),
+      source=seqio.TfdsDataSource(tfds_name="keti/ko:1.0.0"),
       preprocessors=[
           functools.partial(
               seqio.preprocessors.rekey,
@@ -124,7 +124,7 @@ for mean_value in (3, 5, 10, 20):
 
 seqio.TaskRegistry.add(
     "keti_ko_v220_pegasus_parser",
-    source=seqio.TfdsDataSource(tfds_name="keti/ko"),
+    source=seqio.TfdsDataSource(tfds_name="keti/ko:1.0.0"),
     preprocessors=[
         functools.partial(
             t5.data.preprocessors.rekey,
