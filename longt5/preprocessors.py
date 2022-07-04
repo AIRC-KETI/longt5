@@ -28,7 +28,8 @@
 
 """Preprocessors for long T5."""
 
-from longt5 import parsers
+#from longt5 import parsers
+from pegasus.data import parsers
 import seqio
 import t5.data
 import tensorflow.compat.v2 as tf
