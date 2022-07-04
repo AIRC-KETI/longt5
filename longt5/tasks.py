@@ -145,6 +145,13 @@ seqio.MixtureRegistry.add(
     default_rate=1.0)
 
 seqio.MixtureRegistry.add(
+    "keti_en_ko_v220_span_corruption", [
+        "keti_ko_v220_span_corruption_3_mean_noise",
+        "keti_en_v220_span_corruption_3_mean_noise",
+    ],
+    default_rate=1.0)
+
+seqio.MixtureRegistry.add(
     "keti_en_v220_pegasus_span_corruption", [
         "keti_en_v220_pegasus_parser",
         "keti_en_v220_span_corruption_3_mean_noise",
